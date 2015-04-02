@@ -11,6 +11,7 @@ namespace csutils.Test.Extensions
     [TestFixture]
     public class StringExtensionsTest
     {
+#if CLR
         [TestCase]
         public void TestToColor()
         {
@@ -24,6 +25,7 @@ namespace csutils.Test.Extensions
             Assert.IsNull("".ToColor());
             Assert.IsNull("test".ToColor());
         }
+#endif
 
         [TestCase]
         public void TestToBool()

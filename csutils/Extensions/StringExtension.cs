@@ -9,6 +9,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 #if CLR
 using System.Windows.Media;
+using csutils.Globalisation;
 #endif 
 
 namespace System
@@ -555,11 +556,10 @@ namespace System
         /// <param name="channel"></param>
         /// <param name="targetCulture"></param>
         /// <returns></returns>
-        //public static string Translate(this string key, string channel = "", CultureInfo targetCulture = null)
-        //{
-        //    return TranslationManager.Translate(key, channel, targetCulture);
-        // }
-        //TODO: implement
+        public static string Translate(this string key, string channel = "", CultureInfo targetCulture = null)
+        {
+            return TranslationManager.Translate(key, channel, targetCulture);
+        }
     }
 
     /// <summary>

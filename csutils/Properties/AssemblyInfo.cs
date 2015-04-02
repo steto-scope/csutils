@@ -1,12 +1,15 @@
 ﻿using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+#if CLR
+using System.Windows.Markup;
+#endif
 
 // Allgemeine Informationen über eine Assembly werden über die folgenden 
 // Attribute gesteuert. Ändern Sie diese Attributwerte, um die Informationen zu ändern,
 // die mit einer Assembly verknüpft sind.
 [assembly: AssemblyTitle("csutils")]
-[assembly: AssemblyDescription("Contains useful helper classes and extension methods")]
+[assembly: AssemblyDescription("Contains useful helper classes and extension methods. Sources, Tests and Documentation are available at https://csutils.codeplex.com")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("csutils")]
@@ -21,3 +24,7 @@ using System.Runtime.InteropServices;
 
 // Die folgende GUID bestimmt die ID der Typbibliothek, wenn dieses Projekt für COM verfügbar gemacht wird
 [assembly: Guid("c2aa8dcb-e4c5-41e9-af11-f1bc5b0301b2")]
+
+#if CLR
+[assembly: XmlnsDefinitionAttribute("http://schemas.microsoft.com/winfx/2006/xaml/presentation", "csutils.Globalisation")]
+#endif
