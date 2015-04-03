@@ -92,6 +92,10 @@
     <Compile Include="Extensions\StringExtension.cs" />
     <Compile Include="Data\HSV.cs" />
     <Compile Include="Data\Regexes.cs" />
+    <Compile Include="FileFormats\INI\IniFile.cs" />
+    <Compile Include="FileFormats\INI\IniFileLoadStrategy.cs" />
+    <Compile Include="FileFormats\INI\IniParser.cs" />
+    <Compile Include="FileFormats\INI\IniSection.cs" />
     <Compile Include="Globalisation\LanguageChangedEventManager.cs" />
     <Compile Include="Globalisation\TranslateExtension.cs" />
     <Compile Include="Globalisation\TranslationData.cs" />

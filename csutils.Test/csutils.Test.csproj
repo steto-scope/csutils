@@ -58,6 +58,9 @@
     <Compile Include="Data\SerializableDictionaryTest.cs" />
     <Compile Include="Extensions\StreamExtensionsTest.cs" />
     <Compile Include="Extensions\StringExtensionsTest.cs" />
+    <Compile Include="FileFormats\INI\IniFileTest.cs" />
+    <Compile Include="FileFormats\INI\IniParserTest.cs" />
+    <Compile Include="FileFormats\INI\IniSectionTest.cs" />
     <Compile Include="Globalisation\TranslationManagerTest.cs" />
     <Compile Include="Globalisation\XmlTranslationProviderTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
