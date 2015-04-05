@@ -17,21 +17,25 @@ namespace csutils.Downloader
 	{
 		#region Properties
 
-		private int maxBytesPerSecond;
+		private int bandwidthlimit;
 		/// <summary>
-		/// Number of Bytes that are allowed per second
+		/// Bandwith Limit (in B/s)
 		/// </summary>
-		public int MaxBytesPerSecond
+		public int BandwidthLimit
 		{
-			get { return maxBytesPerSecond; }
+			get { return bandwidthlimit; }
 			set 
 			{
 				if (value < 1)
-					throw new ArgumentException("MaxBytesPerSecond has to be >0");
+					throw new ArgumentException("BandwidthLimit has to be >0");
 
-				maxBytesPerSecond = value; 
+				bandwidthlimit = value; 
 			}
 		}
+
+		
+
+
 
 		#endregion
 
@@ -42,7 +46,7 @@ namespace csutils.Downloader
 		System.Timers.Timer resettimer;
 		AutoResetEvent wh = new AutoResetEvent(true);
 		private Stream parent;
-
+		private int cycles;
 		#endregion
 
 		/// <summary>
@@ -50,13 +54,17 @@ namespace csutils.Downloader
 		/// </summary>
 		/// <param name="parentStream"></param>
 		/// <param name="maxBytesPerSecond"></param>
-		public ThrottledStream(Stream parentStream, int maxBytesPerSecond=int.MaxValue) 
+		public ThrottledStream(Stream parentStream, int maxBytesPerSecond=int.MaxValue, int updateCycles=1) 
 		{
-			MaxBytesPerSecond = maxBytesPerSecond;
+			if (updateCycles < 1)
+				throw new ArgumentException("updateCycles has to be >0");
+			cycles = updateCycles;
+
+			BandwidthLimit = maxBytesPerSecond;
 			parent = parentStream;
 			processed = 0;
 			resettimer = new System.Timers.Timer();
-			resettimer.Interval = 1000;
+			resettimer.Interval = 1000 / updateCycles;
 			resettimer.Elapsed += resettimer_Elapsed;
 			resettimer.Start();			
 		}
@@ -66,7 +74,7 @@ namespace csutils.Downloader
 			try
 			{
 				processed += bytes;
-				if (processed >= maxBytesPerSecond)
+				if (processed >= bandwidthlimit/cycles)
 					wh.WaitOne();
 			}
 			catch
@@ -133,8 +141,17 @@ namespace csutils.Downloader
 
 		public override int Read(byte[] buffer, int offset, int count)
 		{
-			Throttle(count);
-			return parent.Read(buffer, offset, count);
+			int step = bandwidthlimit / cycles;
+			int len;
+			int read = 0;
+			for (int i = 0; i < count; i += step)
+			{
+				len = count - i < step ? count - i : step;
+				Throttle(len);
+				read += parent.Read(buffer, offset + i, len);
+			}
+			return read;
+
 		}
 
 		public override long Seek(long offset, SeekOrigin origin)
@@ -149,8 +166,14 @@ namespace csutils.Downloader
 
 		public override void Write(byte[] buffer, int offset, int count)
 		{
-			Throttle(count);
-			parent.Write(buffer, offset, count);
+			int step = bandwidthlimit/cycles;
+			int len;
+			for (int i = 0; i < count; i += step)
+			{
+				len = count-i<step ? count-i: step;
+				Throttle(len);
+				parent.Write(buffer, offset+i, len);
+			}
 		}
 
 		#endregion

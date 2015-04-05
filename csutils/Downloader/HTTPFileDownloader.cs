@@ -269,9 +269,8 @@ namespace csutils.Downloader
             if (Credentials != null)
                 wc.Credentials = Credentials;
 
-			using (src = new ThrottledStream(wc.OpenRead(SourceIdentifier)))
+			using (src = new ThrottledStream(wc.OpenRead(SourceIdentifier),BandwidthLimit,8))
 			{
-				src.MaxBytesPerSecond = BandwidthLimit;
 				if (!string.IsNullOrEmpty(wc.ResponseHeaders["Content-Length"]))
 					TotalBytes = Convert.ToInt64(wc.ResponseHeaders["Content-Length"]);
 				byte[] buffer = new byte[BufferSize];
@@ -331,7 +330,7 @@ namespace csutils.Downloader
 				{
 					maxBytesPerSecond = value;
 					if (src != null)
-						src.MaxBytesPerSecond = value;
+						src.BandwidthLimit = value;
 				}
 			}
 		}
