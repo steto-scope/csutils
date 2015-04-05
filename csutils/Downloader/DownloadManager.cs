@@ -11,15 +11,14 @@ namespace csutils.Downloader
     public class DownloadManager 
     {
         
-        private IDownloader[] donwloads;
+        private List<IDownloader> downloads;
 
         /// <summary>
         /// All downloaders registered for this manager
         /// </summary>
         public IDownloader[] Downloads
         {
-            get { return donwloads; }
-            protected set { donwloads = value; }
+            get { return downloads.ToArray(); }
         }
 
         /// <summary>
@@ -46,18 +45,40 @@ namespace csutils.Downloader
             }
         }
 
-        public DownloadManager(IDownloader[] downloader)
+        public DownloadManager(IEnumerable<string> sources)
         {
-            if (downloader == null)
-                throw new ArgumentException("array can not be null");
+             if (sources == null)
+                throw new ArgumentException("sources can not be null");
 
-            if (downloader.Any(a => a == null))
+            if (sources.Any(a => a == null))
+                throw new ArgumentException("at least one of the sources is null");
+
+            downloads = new List<IDownloader>();
+
+            MaxParallelDownloads = 1;
+            DownloaderFactory fac = new DownloaderFactory();
+            foreach(string src in sources)
+            {
+                IDownloader d = fac.CreateDownloader(src);
+                d.DownloadProgress += DownloadProgress;
+                downloads.Add(d);
+            }         
+        }
+
+        public DownloadManager(IEnumerable<IDownloader> downloaders)
+        {
+            if (downloaders == null)
+                throw new ArgumentException("downloaders can not be null");
+
+            if (downloaders.Any(a => a == null))
                 throw new ArgumentException("at least one of the downloaders is null");
 
-            Parallel = 1;
-            Downloads = downloader;
+            downloads = new List<IDownloader>();
 
-            foreach(var d in downloader)
+            MaxParallelDownloads = 1;
+            downloads.AddRange(downloaders);
+
+            foreach(var d in downloaders)
                 d.DownloadProgress += DownloadProgress;
         }
 
@@ -78,17 +99,39 @@ namespace csutils.Downloader
         /// <summary>
         /// Amount of parallel downloads
         /// </summary>
-        public int Parallel
+        public int MaxParallelDownloads
         {
             get { return parallel; }
-            set { parallel = value; }
+            set 
+            {
+                if (value <= 0)
+                    throw new ArgumentException("MaxParallelDownloads has to be at least 1");
+
+                if(value >= parallel)
+                    parallel = value; 
+                else
+                {
+                    //suspend additional downloads if the new value is smaller than the old one
+                    for (int i = 0, skipped=0; i < Downloads.Length; i++ )
+                    {
+                        if(Downloads[i].DownloaderState == DownloadState.Downloading)
+                        {
+                            if (skipped < value)
+                                skipped++;
+                            else
+                                Downloads[i].Pause();
+                        }
+                    }
+                    parallel = value;
+                }
+            }
         }
 
 
 
         public void StartAsync()
         {
-            foreach(var dl in Pending.Take(Parallel-RunningDownloads.Count()))
+            foreach(var dl in Pending.Take(MaxParallelDownloads-RunningDownloads.Count()))
             {
                 dl.StartAsync();
             }

@@ -112,5 +112,12 @@ namespace csutils.Downloader
             get;
             protected set;
         }
+
+
+        public bool StreamStaysOpen
+        {
+            get;
+            set;
+        }
     }
 }

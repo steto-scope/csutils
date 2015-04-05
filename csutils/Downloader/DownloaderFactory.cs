@@ -43,18 +43,7 @@ namespace csutils.Downloader
             return new HTTPFileDownloader(path, target, credentials);
         }
 
-        private DirectoryInfo temppath;
-
-        public DirectoryInfo TempPath
-        {
-            get { return temppath; }
-            set { temppath = value; }
-        }
-
-        public DownloaderFactory()
-        {
-            TempPath = new DirectoryInfo(Path.Combine(Path.GetTempPath(), "Downloader\\"));
-        }
+        
 
     }
 }

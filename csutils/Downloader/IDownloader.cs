@@ -36,7 +36,7 @@ namespace csutils.Downloader
 
 
         /// <summary>
-        /// Current state of the downloader. 
+        /// Gets current state of the downloader. 
         /// </summary>
         DownloadState DownloaderState
         {
@@ -63,6 +63,14 @@ namespace csutils.Downloader
         bool IsDownloading { get; }
         bool IsCompleted { get; }
         bool HasUnknownFilesize { get; }
+
+        /// <summary>
+        /// Determines if the Target-Stream should stay opened after a successful completion of the download. Default is true.
+        /// A failed Download will always close the stream and delete the target-file (if it was a FileStream). 
+        /// Setting this to false is only recommended when writing to files. 
+        /// Closing a MemoryStream that acts as target would make the download pointless
+        /// </summary>
+        bool StreamStaysOpen { get; set; }
 
         event EventHandler<DownloadProgressEventArgs> DownloadProgress;
 

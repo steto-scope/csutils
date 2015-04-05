@@ -38,7 +38,7 @@ namespace csutils.Downloader
         /// <summary>
         /// Notifies every BufferSize*NotifyEvery bytes the caller about changes
         /// </summary>
-        public static int NotifyEvery
+        public static int NotifyInterval
         {
             get { return notifyevery; }
             set { notifyevery = value; }
@@ -203,10 +203,34 @@ namespace csutils.Downloader
                 
                 
                 return;
-            }
+            }       
 
             DownloaderState = DownloadState.Completed;
             RaiseDownloadProgress(DownloadedBytes, DownloadState.Completed);
+
+            //always close FileStreams after completion
+            if(Target is FileStream)
+            {
+                string name = ((FileStream)Target).Name;
+                Target.Close();
+                Target.Dispose();
+                if(DownloaderState == DownloadState.Aborted || DownloaderState == DownloadState.Error)
+                {
+                    try
+                    {
+                        File.Delete(name);
+                    }
+                    catch { }
+                }
+            }
+            else
+            {
+                if (DownloaderState == DownloadState.Aborted || DownloaderState == DownloadState.Error)
+                {
+                    Target.Close();
+                    Target.Dispose();
+                }
+            }
 
         }
 
@@ -260,7 +284,7 @@ namespace csutils.Downloader
                         Target.Write(buffer, 0, read);
                     i++;
 
-                    if (i % NotifyEvery == 0 && bw!=null && bw.IsBusy)
+                    if (i % NotifyInterval == 0 && bw!=null && bw.IsBusy)
                         bw.ReportProgress(read);
                 }
             }
