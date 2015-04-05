@@ -130,6 +130,29 @@ namespace csutils.Downloader
             }
         }
 
+		private int bandwidthlimit = int.MaxValue;
+		/// <summary>
+		/// Bandwidth-Limit for all Downloaders combined (in B/s). The Limit will be distributed evenly to all active Downloaders
+		/// </summary>
+		public int BandwidthLimit
+		{
+			get { return bandwidthlimit; }
+			set 
+			{
+				bandwidthlimit = value;
+				ApplyDownloadLimits();
+			}
+		}
+
+		private void ApplyDownloadLimits()
+		{
+			if(RunningDownloads.Count()<1)
+				return;
+
+			int limit = BandwidthLimit/RunningDownloads.Count();
+			foreach (IDownloader dl in RunningDownloads)
+				dl.BandwidthLimit = limit;
+		}
 
 
         public void StartAsync()
@@ -138,6 +161,7 @@ namespace csutils.Downloader
             {
                 dl.StartAsync();
             }
+			ApplyDownloadLimits();
         }
 
         public void Pause()

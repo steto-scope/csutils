@@ -83,7 +83,6 @@ namespace csutils.Downloader
         }
 
         protected WebClient wc;
-        protected Stream src;
         protected BackgroundWorker bw;
 
         public void StartAsync()
@@ -179,7 +178,6 @@ namespace csutils.Downloader
             {
                 bw.Dispose();
                 bw = null;
-                src = null;
                 Target.Seek(0, SeekOrigin.Begin);
                 DownloadedBytes = 0;
                 DownloaderState = DownloadState.Inactive;
@@ -262,6 +260,8 @@ namespace csutils.Downloader
             return size;
         }
 
+		ThrottledStream src;
+
         void bw_DoWork(object sender, DoWorkEventArgs e)
         {
             wc = new WebClient();
@@ -269,28 +269,31 @@ namespace csutils.Downloader
             if (Credentials != null)
                 wc.Credentials = Credentials;
 
-            src = wc.OpenRead(SourceIdentifier);
-            if(!string.IsNullOrEmpty(wc.ResponseHeaders["Content-Length"]))
-                TotalBytes = Convert.ToInt64(wc.ResponseHeaders["Content-Length"]);
-            byte[] buffer = new byte[BufferSize];
+			using (src = new ThrottledStream(wc.OpenRead(SourceIdentifier)))
+			{
+				src.MaxBytesPerSecond = BandwidthLimit;
+				if (!string.IsNullOrEmpty(wc.ResponseHeaders["Content-Length"]))
+					TotalBytes = Convert.ToInt64(wc.ResponseHeaders["Content-Length"]);
+				byte[] buffer = new byte[BufferSize];
 
-            int i = 0;
-            int read = 1;
-            while (DownloaderState != DownloadState.Aborting && read > 0)
-            {
-                if (DownloaderState == DownloadState.Paused)
-                    Thread.Sleep(100);
-                else
-                {
-                    read = src.Read(buffer, 0, buffer.Length);
-                    if (read > 0)
-                        Target.Write(buffer, 0, read);
-                    i++;
+				int i = 0;
+				int read = 1;
+				while (DownloaderState != DownloadState.Aborting && read > 0)
+				{
+					if (DownloaderState == DownloadState.Paused)
+						Thread.Sleep(100);
+					else
+					{
+						read = src.Read(buffer, 0, buffer.Length);
+						if (read > 0)
+							Target.Write(buffer, 0, read);
+						i++;
 
-                    if (i % NotifyInterval == 0 && bw!=null && bw.IsBusy)
-                        bw.ReportProgress(read);
-                }
-            }
+						if (i % NotifyInterval == 0 && bw != null && bw.IsBusy)
+							bw.ReportProgress(read);
+					}
+				}
+			}
             Target.Flush();
             Target.Seek(0, SeekOrigin.Begin);
 
@@ -309,6 +312,28 @@ namespace csutils.Downloader
                 DownloaderState = DownloadState.Paused;
                 RaiseDownloadProgress(DownloadedBytes, DownloadState.Paused);
             }
-        }       
-    }
+        }
+
+
+		private int maxBytesPerSecond = int.MaxValue;
+		/// <summary>
+		/// The bandwidth limitation in B/s
+		/// </summary>
+		public int BandwidthLimit
+		{
+			get
+			{
+				return maxBytesPerSecond;
+			}
+			set
+			{
+				if(value>0)
+				{
+					maxBytesPerSecond = value;
+					if (src != null)
+						src.MaxBytesPerSecond = value;
+				}
+			}
+		}
+	}
 }
