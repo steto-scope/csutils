@@ -150,8 +150,7 @@ namespace csutils.Downloader
 				Throttle(len);
 				read += parent.Read(buffer, offset + i, len);
 			}
-			return read;
-
+			return read;			
 		}
 
 		public override long Seek(long offset, SeekOrigin origin)

@@ -10,7 +10,7 @@ namespace csutils.Downloader
     /// <summary>
     /// Base class for all downloader
     /// </summary>
-    internal abstract class DownloaderBase : Base//, IDownloader
+    internal abstract class DownloaderBase : Base
     {
 
       

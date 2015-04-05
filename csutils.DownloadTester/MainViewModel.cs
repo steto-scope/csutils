@@ -28,7 +28,7 @@ namespace csutils.DownloadTester
             Downloader.DownloadManager m = new Downloader.DownloadManager(urls);           
             DownloadManager = m;
             DownloadManager.MaxParallelDownloads = 2;
-			DownloadManager.BandwidthLimit = 1024;
+			DownloadManager.BandwidthLimit = 1024*64;
         }
     }
 }
