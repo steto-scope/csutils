@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "csutils", "csutils\csutils.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "csutils.Test", "csutils.Test\csutils.Test.csproj", "{FDDBC16B-C0DD-4049-B953-9B359961B8D4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "csutils.DownloadTester", "csutils.DownloadTester\csutils.DownloadTester.csproj", "{42FDC2F3-85DB-4C41-A9E6-4D93F3FB0A42}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,6 +31,12 @@ Global
 		{FDDBC16B-C0DD-4049-B953-9B359961B8D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FDDBC16B-C0DD-4049-B953-9B359961B8D4}.Release|Any CPU.Build.0 = Release|Any CPU
 		{FDDBC16B-C0DD-4049-B953-9B359961B8D4}.Release|x86.ActiveCfg = Release|Any CPU
+		{42FDC2F3-85DB-4C41-A9E6-4D93F3FB0A42}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{42FDC2F3-85DB-4C41-A9E6-4D93F3FB0A42}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{42FDC2F3-85DB-4C41-A9E6-4D93F3FB0A42}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{42FDC2F3-85DB-4C41-A9E6-4D93F3FB0A42}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{42FDC2F3-85DB-4C41-A9E6-4D93F3FB0A42}.Release|Any CPU.Build.0 = Release|Any CPU
+		{42FDC2F3-85DB-4C41-A9E6-4D93F3FB0A42}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

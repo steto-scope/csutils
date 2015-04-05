@@ -9,7 +9,7 @@ using System.Threading;
 
 namespace csutils.Downloader
 {
-    internal class HTTPFileDownloader : DownloaderBase
+    internal class HTTPFileDownloader : DownloaderBase, IDownloader
     {
         protected static int buffersize = 1024 * 64;
         /// <summary>
@@ -102,14 +102,15 @@ namespace csutils.Downloader
                 bw.RunWorkerCompleted += bw_RunWorkerCompleted;
                 bw.ProgressChanged += bw_ProgressChanged;
 
-                DownloaderState = DownloadState.Started;
+               
                 RaiseDownloadProgress(0, DownloadState.Started);
+                DownloaderState = DownloadState.Downloading;
                 bw.RunWorkerAsync();
             }
             else if (DownloaderState == DownloadState.Paused)
             {
-                DownloaderState = DownloadState.Started;
-                RaiseDownloadProgress(0, DownloadState.Started);
+                DownloaderState = DownloadState.Downloading;
+                RaiseDownloadProgress(0, DownloadState.Downloading);
             }
         }
 
@@ -124,9 +125,9 @@ namespace csutils.Downloader
                     RaiseDownloadProgress(0, DownloadState.Starting);
 
                     Reset();
-
-                    DownloaderState = DownloadState.Started;
+                                       
                     RaiseDownloadProgress(0, DownloadState.Started);
+                    DownloaderState = DownloadState.Downloading;
 
                     args = new DoWorkEventArgs(null);
                     bw_DoWork(this, args);
@@ -158,6 +159,8 @@ namespace csutils.Downloader
         void bw_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             DownloadedBytes += e.ProgressPercentage;
+            OnPropertyChanged("DownloadedBytes");
+            OnPropertyChanged("Percentage");
             RaiseDownloadProgress(DownloadedBytes, DownloadState.Downloading);
         }
 
@@ -301,7 +304,7 @@ namespace csutils.Downloader
 
         public void Pause()
         {
-            if (DownloaderState == DownloadState.Started)
+            if (DownloaderState == DownloadState.Downloading)
             {
                 DownloaderState = DownloadState.Paused;
                 RaiseDownloadProgress(DownloadedBytes, DownloadState.Paused);

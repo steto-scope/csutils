@@ -72,6 +72,8 @@ namespace csutils.Downloader
         /// </summary>
         bool StreamStaysOpen { get; set; }
 
+        double Percentage { get; }
+
         event EventHandler<DownloadProgressEventArgs> DownloadProgress;
 
     }

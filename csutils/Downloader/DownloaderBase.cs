@@ -1,4 +1,5 @@
-﻿using System;
+﻿using csutils.Data;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -9,14 +10,14 @@ namespace csutils.Downloader
     /// <summary>
     /// Base class for all downloader
     /// </summary>
-    internal abstract class DownloaderBase : IDownloader
+    internal abstract class DownloaderBase : Base//, IDownloader
     {
 
       
 
         public bool IsCompleted { get { return DownloaderState == DownloadState.Completed; } }
 
-        public bool IsDownloading { get { return DownloaderState == DownloadState.Started; } }
+        public bool IsDownloading { get { return DownloaderState == DownloadState.Downloading; } }
 
        
         /// <summary>
@@ -55,17 +56,20 @@ namespace csutils.Downloader
         }
 
 
-
+        private long? totalbytes;
         public long? TotalBytes
         {
-            get;
-            protected set;
+            get { return totalbytes; }
+            protected set { totalbytes = value;
+            OnPropertyChanged("TotalBytes");
+            }
         }
 
+        private DownloadState state;
         public DownloadState DownloaderState
         {
-            get;
-            protected set;
+            get { return state; }
+            protected set { state = value; OnPropertyChanged("DownloaderState"); }
         }
 
         public long DownloadedBytes
@@ -74,27 +78,11 @@ namespace csutils.Downloader
             protected set;
         }
 
-
-        public void StartAsync()
+        public override object Clone()
         {
             throw new NotImplementedException();
-        }
-
-        public void Start()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Pause()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Abort()
-        {
-            throw new NotImplementedException();
-        }
-
+        }  
+        
         public Exception Error
         {
             get;

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using csutils.Data;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,7 +9,7 @@ namespace csutils.Downloader
     /// <summary>
     /// Manager for multiple downloads, based on the workpile pattern
     /// </summary>
-    public class DownloadManager 
+    public class DownloadManager : Base
     {
         
         private List<IDownloader> downloads;
@@ -124,6 +125,8 @@ namespace csutils.Downloader
                     }
                     parallel = value;
                 }
+
+                OnPropertyChanged("MaxParallelDownloads");
             }
         }
 
@@ -139,6 +142,7 @@ namespace csutils.Downloader
 
         public void Pause()
         {
+            Console.WriteLine(RunningDownloads.Count());
             foreach (var dl in RunningDownloads)
                 dl.Pause();
         }
@@ -169,5 +173,10 @@ namespace csutils.Downloader
             }
         }
 
+
+        public override object Clone()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
