@@ -84,6 +84,7 @@
       <DependentUpon>AssemblyVersion.tt</DependentUpon>
     </Compile>
     <Compile Include="Data\Base.cs" />
+    <Compile Include="Data\DummyData.cs" />
     <Compile Include="Data\TwoKeyDictionary.cs" />
     <Compile Include="Data\SerializableDictionary.cs" />
     <Compile Include="Downloader\DownloaderBase.cs" />

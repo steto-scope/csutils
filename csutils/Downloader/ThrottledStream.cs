@@ -9,62 +9,89 @@ using System.Timers;
 
 namespace csutils.Downloader
 {
+	/// <summary>
+	/// Stream that limits the maximal bandwith. 
+	/// If the internal counter exceeds the MaxBytePerSecond-Value in under 1s the AutoResetEvent blocks the stream until the second finally elapsed
+	/// </summary>
 	public class ThrottledStream : Stream
 	{
-		private int maxBytePerSecond;
+		#region Properties
 
-		public int MaxBytePerSecond
+		private int maxBytesPerSecond;
+		/// <summary>
+		/// Number of Bytes that are allowed per second
+		/// </summary>
+		public int MaxBytesPerSecond
 		{
-			get { return maxBytePerSecond; }
+			get { return maxBytesPerSecond; }
 			set 
 			{
 				if (value < 1)
-					throw new ArgumentException("MaxBytePerSecond has to be greater than 0");
+					throw new ArgumentException("MaxBytesPerSecond has to be >0");
 
-				maxBytePerSecond = value; 
+				maxBytesPerSecond = value; 
 			}
 		}
 
-		private int start;
+		#endregion
+
+
+		#region Private Members
+
 		private int processed;
-		System.Timers.Timer ticktimer;
-
-
-
-
+		System.Timers.Timer resettimer;
+		AutoResetEvent wh = new AutoResetEvent(true);
 		private Stream parent;
-		public ThrottledStream(Stream parentStream)
+
+		#endregion
+
+		/// <summary>
+		/// Creates a new Stream with Databandwith cap
+		/// </summary>
+		/// <param name="parentStream"></param>
+		/// <param name="maxBytesPerSecond"></param>
+		public ThrottledStream(Stream parentStream, int maxBytesPerSecond=int.MaxValue) 
 		{
+			MaxBytesPerSecond = maxBytesPerSecond;
 			parent = parentStream;
 			processed = 0;
-			ticktimer = new System.Timers.Timer();
-			ticktimer.Interval = 1000;
-			ticktimer.Elapsed += ticktimer_Elapsed;
-			ticktimer.Start();
+			resettimer = new System.Timers.Timer();
+			resettimer.Interval = 1000;
+			resettimer.Elapsed += resettimer_Elapsed;
+			resettimer.Start();			
 		}
 
-		public ThrottledStream(Stream parentStream, int bps) : this(parentStream)
+		protected void Throttle(int bytes)
 		{
-			MaxBytePerSecond = bps;
+			try
+			{
+				processed += bytes;
+				if (processed >= maxBytesPerSecond)
+					wh.WaitOne();
+			}
+			catch
+			{
+			}
 		}
-		
+
+		private void resettimer_Elapsed(object sender, ElapsedEventArgs e)
+		{
+			processed = 0;
+			wh.Set();
+		}
+
+		#region Stream-Overrides
+
 		public override void Close()
 		{
-			ticktimer.Stop();
-			ticktimer.Close();
+			resettimer.Stop();
+			resettimer.Close();
 			base.Close();
 		}
 		protected override void Dispose(bool disposing)
 		{
-			
-			ticktimer.Dispose();
+			resettimer.Dispose();
 			base.Dispose(disposing);
-		}
-
-		private void ticktimer_Elapsed(object sender, ElapsedEventArgs e)
-		{
-			start = Environment.TickCount;
-			processed = 0;
 		}
 
 		public override bool CanRead
@@ -107,7 +134,6 @@ namespace csutils.Downloader
 		public override int Read(byte[] buffer, int offset, int count)
 		{
 			Throttle(count);
-
 			return parent.Read(buffer, offset, count);
 		}
 
@@ -124,28 +150,11 @@ namespace csutils.Downloader
 		public override void Write(byte[] buffer, int offset, int count)
 		{
 			Throttle(count);
-
 			parent.Write(buffer, offset, count);
 		}
 
-		protected void Throttle(int bytes)
-		{
-			if (bytes <= 0 || MaxBytePerSecond <= 0)
-				return;
+		#endregion
 
-			processed += bytes;
-			
-			if(processed >= maxBytePerSecond)
-			{
-				try
-				{
-					Thread.Sleep(Environment.TickCount - start + 1);
-				}
-				catch
-				{
-
-				}
-			}
-		}
+		
 	}
 }
