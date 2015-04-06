@@ -560,6 +560,39 @@ namespace System
         {
             return TranslationManager.Translate(key, channel, targetCulture);
         }
+
+
+		/// <summary>
+		/// Applies a regular expression to an array of strings. The regex gets evaluated against each element and every match stays in the array
+		/// </summary>
+		/// <param name="strings"></param>
+		/// <param name="regexPattern"></param>
+		/// <param name="options"></param>
+		/// <returns></returns>
+		public static string[] Filter(this string[] strings, string regexPattern, RegexOptions options = RegexOptions.None)
+		{
+			Regex r = new Regex(regexPattern, options);
+			List<string> output = new List<string>();
+			foreach(string str in strings)
+				if (r.IsMatch(str))
+					output.Add(str);
+			return output.ToArray();
+		}
+
+		/// <summary>
+		/// Applies a regular expression to a enumeration. The regex gets evaluated against each element and every match stays
+		/// </summary>
+		/// <param name="strings"></param>
+		/// <param name="regexPattern"></param>
+		/// <param name="options"></param>
+		/// <returns></returns>
+		public static IEnumerable<string> Filter(this IEnumerable<string> strings, string regexPattern, RegexOptions options = RegexOptions.None)
+		{
+			Regex r = new Regex(regexPattern, options);
+			foreach (string str in strings)
+				if (r.IsMatch(str))
+					yield return str;
+		}
     }
 
     /// <summary>

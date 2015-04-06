@@ -2,6 +2,7 @@
 using System.Windows.Media;
 using System.IO;
 using System.Reflection;
+using System.Linq;
 using csutils.Test.Data;
 using System.Text;
 using NUnit.Framework;
@@ -285,5 +286,37 @@ namespace csutils.Test.Extensions
             Assert.AreEqual(4, @"t€st".ToStream(Encoding.ASCII).Length); //1 byte for every char
             Assert.AreEqual(@"t€st", @"t€st".ToStream(Encoding.Unicode).ToString(Encoding.Unicode));
         }
+
+
+		[TestCase]
+		public void TestFilter()
+		{
+			string[] data = new string[] { "abc","bcd","cde","def","\"test","H3llo W0rld","","Multi\nline" };
+
+			var res = data.Filter("[def]");
+			Assert.AreEqual(6, res.Length);
+			Assert.AreEqual("bcd",res[0]);
+			Assert.AreEqual("cde", res[1]);
+			Assert.AreEqual("def", res[2]);
+			Assert.AreEqual("\"test", res[3]);
+			Assert.AreEqual("H3llo W0rld", res[4]);
+			Assert.AreEqual("Multi\nline", res[5]);
+
+			res = data.Filter("");
+			Assert.AreEqual(8, res.Length);
+
+
+
+
+			var res2 = data.Select(s => s).Filter("[def]").ToArray();
+			Assert.AreEqual(6, res2.Length);
+			Assert.AreEqual("bcd", res2[0]);
+			Assert.AreEqual("cde", res2[1]);
+			Assert.AreEqual("def", res2[2]);
+			Assert.AreEqual("\"test", res2[3]);
+			Assert.AreEqual("H3llo W0rld", res2[4]);
+			Assert.AreEqual("Multi\nline", res2[5]);
+
+		}
     }
 }
