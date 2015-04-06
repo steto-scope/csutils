@@ -87,7 +87,7 @@
     <Compile Include="Data\TwoKeyDictionary.cs" />
     <Compile Include="Data\SerializableDictionary.cs" />
     <Compile Include="Extensions\ColorExtension.cs" />
-    <Compile Include="Extensions\IntExtension.cs" />
+    <Compile Include="Extensions\NumericExtension.cs" />
     <Compile Include="Extensions\StreamExtension.cs" />
     <Compile Include="Extensions\StringExtension.cs" />
     <Compile Include="Data\HSV.cs" />
