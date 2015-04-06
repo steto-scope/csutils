@@ -23,13 +23,13 @@ namespace csutils.Downloader
 		/// </summary>
 		public int BandwidthLimit
 		{
-			get { return bandwidthlimit; }
+			get { return (int)(bandwidthlimit*10); }
 			set 
 			{
 				if (value < 1)
 					throw new ArgumentException("BandwidthLimit has to be >0");
 
-				bandwidthlimit = value; 
+				bandwidthlimit = value/10; 
 			}
 		}
 
@@ -46,7 +46,6 @@ namespace csutils.Downloader
 		System.Timers.Timer resettimer;
 		AutoResetEvent wh = new AutoResetEvent(true);
 		private Stream parent;
-		private int cycles;
 		#endregion
 
 		/// <summary>
@@ -54,33 +53,18 @@ namespace csutils.Downloader
 		/// </summary>
 		/// <param name="parentStream"></param>
 		/// <param name="maxBytesPerSecond"></param>
-		public ThrottledStream(Stream parentStream, int maxBytesPerSecond=int.MaxValue, int updateCycles=1) 
+		public ThrottledStream(Stream parentStream, int maxBytesPerSecond=int.MaxValue) 
 		{
-			if (updateCycles < 1)
-				throw new ArgumentException("updateCycles has to be >0");
-			cycles = updateCycles;
 
 			BandwidthLimit = maxBytesPerSecond;
 			parent = parentStream;
 			processed = 0;
 			resettimer = new System.Timers.Timer();
-			resettimer.Interval = 1000 / updateCycles;
+			resettimer.Interval = 100;
 			resettimer.Elapsed += resettimer_Elapsed;
 			resettimer.Start();			
 		}
 
-		protected void Throttle(int bytes)
-		{
-			try
-			{
-				processed += bytes;
-				if (processed >= bandwidthlimit/cycles)
-					wh.WaitOne();
-			}
-			catch
-			{
-			}
-		}
 
 		private void resettimer_Elapsed(object sender, ElapsedEventArgs e)
 		{
@@ -141,16 +125,56 @@ namespace csutils.Downloader
 
 		public override int Read(byte[] buffer, int offset, int count)
 		{
-			int step = bandwidthlimit / cycles;
-			int len;
 			int read = 0;
-			for (int i = 0; i < count; i += step)
+			//case 1: everything fits into this cycle
+			//case 2: nothing fits into this cycle, but 1 cycle would be enough 
+			//case 3: everything would fit into 1 cycle, but the current cycle has not enough space so 2 cycles overlap
+			//case 4: many cycles are needed (processed ignored in the first, would cause more problems than use)
+
+
+			//case 1
+			if(processed+count < bandwidthlimit)
 			{
-				len = count - i < step ? count - i : step;
-				Throttle(len);
-				read += parent.Read(buffer, offset + i, len);
+				processed += count;
+				return parent.Read(buffer, offset, count);
 			}
-			return read;			
+
+			//case 2
+			if(processed == bandwidthlimit && count < bandwidthlimit)
+			{
+				wh.WaitOne();
+				processed += count;
+				return parent.Read(buffer, offset, count);
+			}
+
+			//case 3
+			if(count < bandwidthlimit && processed+count > bandwidthlimit)
+			{
+				int first = bandwidthlimit - processed;
+				int second = count - first;
+				read = parent.Read(buffer, offset, first);
+				wh.WaitOne();
+				read += parent.Read(buffer, offset + read, second);
+				processed += second;
+				return read;				
+			}
+			
+			//case 4
+			if(count > bandwidthlimit)
+			{
+				int current = 0;				
+				for(int i=0; i<count; i+=current)
+				{
+					current = Math.Min(count-i, bandwidthlimit);
+					read += parent.Read(buffer, offset + i, current);
+					if (current == bandwidthlimit)
+						wh.WaitOne();
+				}
+				processed += current;
+				return read;
+			}
+
+			return 0;
 		}
 
 		public override long Seek(long offset, SeekOrigin origin)
@@ -165,14 +189,15 @@ namespace csutils.Downloader
 
 		public override void Write(byte[] buffer, int offset, int count)
 		{
-			int step = bandwidthlimit/cycles;
-			int len;
-			for (int i = 0; i < count; i += step)
+			int current = 0;
+			for (int i = 0; i < count; i+=current )
 			{
-				len = count-i<step ? count-i: step;
-				Throttle(len);
-				parent.Write(buffer, offset+i, len);
-			}
+				current = Math.Min(count-i, bandwidthlimit);
+				parent.Write(buffer, offset+i, current);
+				if (current == bandwidthlimit)
+					wh.WaitOne();
+			}			
+			
 		}
 
 		#endregion

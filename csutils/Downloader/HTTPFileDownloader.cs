@@ -11,7 +11,7 @@ namespace csutils.Downloader
 {
     internal class HTTPFileDownloader : DownloaderBase, IDownloader
     {
-        protected static int buffersize = 1024 * 64;
+        protected static int buffersize = 1024 * 32;
         /// <summary>
         /// Size of the receiving buffer. Any change needs a cancellation of a running download
         /// </summary>
@@ -269,7 +269,7 @@ namespace csutils.Downloader
             if (Credentials != null)
                 wc.Credentials = Credentials;
 
-			using (src = new ThrottledStream(wc.OpenRead(SourceIdentifier),BandwidthLimit,8))
+			using (src = new ThrottledStream(wc.OpenRead(SourceIdentifier),BandwidthLimit))
 			{
 				if (!string.IsNullOrEmpty(wc.ResponseHeaders["Content-Length"]))
 					TotalBytes = Convert.ToInt64(wc.ResponseHeaders["Content-Length"]);
