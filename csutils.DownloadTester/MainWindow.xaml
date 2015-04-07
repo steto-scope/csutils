@@ -1,0 +1,23 @@
+﻿<Window x:Class="csutils.DownloadTester.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="MainWindow" Height="350" Width="725">
+    <Grid>
+        <StackPanel>
+            <Button Content="Reset" Name="reset" Click="reset_Click" />
+            <Button Content="Start" Name="start" Click="start_Click" />
+            <Button Content="Pause" Name="pause" Click="pause_Click" />
+            <ListView ItemsSource="{Binding DownloadManager.Downloads}">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn DisplayMemberBinding="{Binding SourceIdentifier}" Width="300" />
+                        <GridViewColumn DisplayMemberBinding="{Binding DownloaderState}" Width="100" />
+                        <GridViewColumn DisplayMemberBinding="{Binding DownloadedBytes}" Width="50" />
+                        <GridViewColumn DisplayMemberBinding="{Binding TotalBytes}" Width="50" />
+                        <GridViewColumn DisplayMemberBinding="{Binding Percentage}" Width="50" />
+                    </GridView>
+                </ListView.View>
+            </ListView>
+        </StackPanel>
+    </Grid>
+</Window>

@@ -84,8 +84,17 @@
       <DependentUpon>AssemblyVersion.tt</DependentUpon>
     </Compile>
     <Compile Include="Data\Base.cs" />
+    <Compile Include="Data\DummyData.cs" />
     <Compile Include="Data\TwoKeyDictionary.cs" />
     <Compile Include="Data\SerializableDictionary.cs" />
+    <Compile Include="Downloader\DownloaderBase.cs" />
+    <Compile Include="Downloader\DownloaderFactory.cs" />
+    <Compile Include="Downloader\DownloadManager.cs" />
+    <Compile Include="Downloader\DownloadProgressEventArgs.cs" />
+    <Compile Include="Downloader\DownloadState.cs" />
+    <Compile Include="Downloader\HTTPFileDownloader.cs" />
+    <Compile Include="Downloader\IDownloader.cs" />
+    <Compile Include="Downloader\ThrottledStream.cs" />
     <Compile Include="Extensions\ColorExtension.cs" />
     <Compile Include="Extensions\NumericExtension.cs" />
     <Compile Include="Extensions\StreamExtension.cs" />
