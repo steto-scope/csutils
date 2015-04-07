@@ -12,14 +12,14 @@ namespace csutils.Downloader
     public class DownloadManager : Base
     {
         
-        private List<IDownloader> downloads;
+        private IDownloader[] downloads;
 
         /// <summary>
         /// All downloaders registered for this manager
         /// </summary>
         public IDownloader[] Downloads
         {
-            get { return downloads.ToArray(); }
+            get { return downloads; }
         }
 
         /// <summary>
@@ -54,15 +54,17 @@ namespace csutils.Downloader
             if (sources.Any(a => a == null))
                 throw new ArgumentException("at least one of the sources is null");
 
-            downloads = new List<IDownloader>();
+			downloads = new IDownloader[sources.Count()];
 
             MaxParallelDownloads = 1;
             DownloaderFactory fac = new DownloaderFactory();
+			int i = 0;
             foreach(string src in sources)
             {
                 IDownloader d = fac.CreateDownloader(src);
                 d.DownloadProgress += DownloadProgress;
-                downloads.Add(d);
+                downloads[i] = d;
+				i++;
             }         
         }
 
@@ -73,11 +75,9 @@ namespace csutils.Downloader
 
             if (downloaders.Any(a => a == null))
                 throw new ArgumentException("at least one of the downloaders is null");
-
-            downloads = new List<IDownloader>();
-
+			
             MaxParallelDownloads = 1;
-            downloads.AddRange(downloaders);
+			downloads = downloaders.ToArray();
 
             foreach(var d in downloaders)
                 d.DownloadProgress += DownloadProgress;

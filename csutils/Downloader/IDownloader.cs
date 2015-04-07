@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace csutils.Downloader
 {
+	/// <summary>
+	/// Interface for all Downloader Implemetations
+	/// </summary>
     public interface IDownloader
     {
         /// <summary>
@@ -43,6 +46,9 @@ namespace csutils.Downloader
             get;
         }
 
+		/// <summary>
+		/// Amount of Bytes downloaded so far
+		/// </summary>
         long DownloadedBytes { get;  }
 
         /// <summary>
@@ -50,24 +56,42 @@ namespace csutils.Downloader
         /// </summary>
         Exception Error { get; }
         /// <summary>
-        /// Target where the received bytes are written. The stream gets never closed by the downloader. 
-        /// Creation and closing has to be done by the caller.
+        /// Target where the received bytes are written.
         /// </summary>
         Stream Target { get;  }
+		/// <summary>
+		/// Targetfile where the bytes are written. 
+		/// </summary>
+		string TargetFile { get; }
         /// <summary>
         /// Source identifier. 
         /// Based on this property a suitable downloader is chosen by the factory and the origin of the file to download is specified
         /// </summary>
         string SourceIdentifier { get; }
-
+		/// <summary>
+		/// True, if the Downloader is currently downloading
+		/// </summary>
         bool IsDownloading { get; }
+		/// <summary>
+		/// True, if the download has been completed successfully
+		/// </summary>
         bool IsCompleted { get; }
+		/// <summary>
+		/// True if the filesize is unknown. This can occour when the download is a stream or the size hasn´t been retrieved yet
+		/// </summary>
         bool HasUnknownFilesize { get; }
-
+		/// <summary>
+		/// Gets or sets the bandwidth limitation for this downloader (in B/s)
+		/// </summary>
 		int BandwidthLimit { get; set; }
-
+		/// <summary>
+		/// Gets the percentage of the download progress. Range: [0, 100]
+		/// </summary>
         double Percentage { get; }
 
+		/// <summary>
+		/// Event for notifying the caller about the progress. 
+		/// </summary>
         event EventHandler<DownloadProgressEventArgs> DownloadProgress;
 
     }

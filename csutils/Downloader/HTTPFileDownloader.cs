@@ -9,6 +9,9 @@ using System.Threading;
 
 namespace csutils.Downloader
 {
+	/// <summary>
+	/// Web downloader
+	/// </summary>
     internal class HTTPFileDownloader : DownloaderBase, IDownloader
     {
         protected static int buffersize = 1024 * 32;

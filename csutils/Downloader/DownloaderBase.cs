@@ -11,9 +11,7 @@ namespace csutils.Downloader
     /// Base class for all downloader
     /// </summary>
     internal abstract class DownloaderBase : Base
-    {
-
-      
+    {     
 
         public bool IsCompleted { get { return DownloaderState == DownloadState.Completed; } }
 
