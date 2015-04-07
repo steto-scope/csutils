@@ -81,7 +81,7 @@ namespace REC.Test.Data
                 Assert.AreEqual(d2e[42],d2[42]);
                 Assert.Fail();
             }
-            catch (Exception ex)
+            catch
             {
                 
             }

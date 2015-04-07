@@ -74,43 +74,45 @@ namespace csutils.Downloader
 
 		#region Stream-Overrides
 
+		/// <inheritdoc />
 		public override void Close()
 		{
 			resettimer.Stop();
 			resettimer.Close();
 			base.Close();
 		}
+		/// <inheritdoc />
 		protected override void Dispose(bool disposing)
 		{
 			resettimer.Dispose();
 			base.Dispose(disposing);
 		}
-
+		/// <inheritdoc />
 		public override bool CanRead
 		{
 			get { return parent.CanRead; }
 		}
-
+		/// <inheritdoc />
 		public override bool CanSeek
 		{
 			get { return parent.CanSeek; }
 		}
-
+		/// <inheritdoc />
 		public override bool CanWrite
 		{
 			get { return parent.CanWrite; }
 		}
-
+		/// <inheritdoc />
 		public override void Flush()
 		{
 			parent.Flush();
 		}
-
+		/// <inheritdoc />
 		public override long Length
 		{
 			get { return parent.Length; }
 		}
-
+		/// <inheritdoc />
 		public override long Position
 		{
 			get
@@ -122,7 +124,7 @@ namespace csutils.Downloader
 				parent.Position = value;
 			}
 		}
-
+		/// <inheritdoc />
 		public override int Read(byte[] buffer, int offset, int count)
 		{
 			int read = 0;
@@ -176,17 +178,17 @@ namespace csutils.Downloader
 
 			return 0;
 		}
-
+		/// <inheritdoc />
 		public override long Seek(long offset, SeekOrigin origin)
 		{
 			return parent.Seek(offset, origin);
 		}
-
+		/// <inheritdoc />
 		public override void SetLength(long value)
 		{
 			parent.SetLength(value);
 		}
-
+		/// <inheritdoc />
 		public override void Write(byte[] buffer, int offset, int count)
 		{
 			int current = 0;

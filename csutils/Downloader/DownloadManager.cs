@@ -33,6 +33,9 @@ namespace csutils.Downloader
             }
         }
 
+		/// <summary>
+		/// Event that is fired if the DownloadManager finished it´s work
+		/// </summary>
         public event EventHandler Completed;
 
         /// <summary>
@@ -46,6 +49,11 @@ namespace csutils.Downloader
             }
         }
 
+		/// <summary>
+		/// Creates a new DownloadManager based on sources-strings. These can be URLs.
+		/// The Default-Implementation of the DownloaderFactory get used to create the downloaders
+		/// </summary>
+		/// <param name="sources"></param>
         public DownloadManager(IEnumerable<string> sources)
         {
              if (sources == null)
@@ -68,6 +76,10 @@ namespace csutils.Downloader
             }         
         }
 
+		/// <summary>
+		/// Creates the DownloadManager with the given Downloaders
+		/// </summary>
+		/// <param name="downloaders"></param>
         public DownloadManager(IEnumerable<IDownloader> downloaders)
         {
             if (downloaders == null)
@@ -88,7 +100,7 @@ namespace csutils.Downloader
             if(e.State == DownloadState.Completed)
             {
                 if (Pending.Count() > 0)
-                    StartAsync();
+                    Start();
 
                 if (Downloads.All(a => a.IsCompleted))
                     if (Completed != null)
@@ -154,8 +166,10 @@ namespace csutils.Downloader
 				dl.BandwidthLimit = limit;
 		}
 
-
-        public void StartAsync()
+		/// <summary>
+		/// Starts/Resumes the downloads of this manager
+		/// </summary>
+        public void Start()
         {
             foreach(var dl in Pending.Take(MaxParallelDownloads-RunningDownloads.Count()))
             {
@@ -164,6 +178,9 @@ namespace csutils.Downloader
 			ApplyDownloadLimits();
         }
 
+		/// <summary>
+		/// Pauses all currently running downloads 
+		/// </summary>
         public void Pause()
         {
             Console.WriteLine(RunningDownloads.Count());
@@ -171,13 +188,18 @@ namespace csutils.Downloader
                 dl.Pause();
         }
 
+		/// <summary>
+		/// Aborts currently running downloads
+		/// </summary>
         public void Abort()
         {
             foreach (var dl in RunningDownloads)
                 dl.Abort();
         }
 
-
+		/// <summary>
+		/// The total amount of downloaded bytes
+		/// </summary>
         public long DownloadedBytes
         {
             get
@@ -186,6 +208,9 @@ namespace csutils.Downloader
             }
         }
 
+		/// <summary>
+		/// The total amount of bytes for all downloads. Returns null if there is any download where the size can not be determined
+		/// </summary>
         public long? TotalBytes
         {
             get
@@ -197,7 +222,10 @@ namespace csutils.Downloader
             }
         }
 
-
+		/// <summary>
+		/// Clones the DownloadManager. Not Implemented
+		/// </summary>
+		/// <returns></returns>
         public override object Clone()
         {
             throw new NotImplementedException();

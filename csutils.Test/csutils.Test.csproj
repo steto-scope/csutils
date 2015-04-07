@@ -57,6 +57,7 @@
     <Compile Include="Data\RegexesTest.cs" />
     <Compile Include="Data\SerializableDictionaryTest.cs" />
     <Compile Include="Downloader\ThrottledStreamTest.cs" />
+    <Compile Include="Extensions\FileInfoExtensionTest.cs" />
     <Compile Include="Extensions\NumericExtensionsTest.cs" />
     <Compile Include="Extensions\StreamExtensionsTest.cs" />
     <Compile Include="Extensions\StringExtensionsTest.cs" />
