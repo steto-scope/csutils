@@ -61,6 +61,7 @@
     <Compile Include="Extensions\NumericExtensionsTest.cs" />
     <Compile Include="Extensions\StreamExtensionsTest.cs" />
     <Compile Include="Extensions\StringExtensionsTest.cs" />
+    <Compile Include="Extensions\UriExtensionTest.cs" />
     <Compile Include="FileFormats\INI\IniFileTest.cs" />
     <Compile Include="FileFormats\INI\IniParserTest.cs" />
     <Compile Include="FileFormats\INI\IniSectionTest.cs" />

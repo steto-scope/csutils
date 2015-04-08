@@ -103,6 +103,7 @@
     <Compile Include="Extensions\StringExtension.cs" />
     <Compile Include="Data\HSV.cs" />
     <Compile Include="Data\Regexes.cs" />
+    <Compile Include="Extensions\UriExtension.cs" />
     <Compile Include="FileFormats\INI\IniFile.cs" />
     <Compile Include="FileFormats\INI\IniFileLoadStrategy.cs" />
     <Compile Include="FileFormats\INI\IniParser.cs" />

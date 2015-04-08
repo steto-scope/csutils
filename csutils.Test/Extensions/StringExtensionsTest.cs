@@ -318,5 +318,16 @@ namespace csutils.Test.Extensions
 			Assert.AreEqual("Multi\nline", res2[5]);
 
 		}
+
+		[TestCase]
+		public void TestIsAbsolutePath()
+		{
+			Assert.IsTrue("C:\\test.txt".IsAbsolutePath());
+			Assert.IsTrue("C:\\".IsAbsolutePath());
+			Assert.IsFalse("test.txt".IsAbsolutePath());
+
+			Assert.IsFalse("google.com".IsAbsolutePath());
+			Assert.IsTrue("http://google.com".IsAbsolutePath());
+		}
     }
 }

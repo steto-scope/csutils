@@ -593,6 +593,17 @@ namespace System
 				if (r.IsMatch(str))
 					yield return str;
 		}
+
+		/// <summary>
+		/// Resturns true if the string is a absolute filepath or Uri
+		/// </summary>
+		/// <param name="str"></param>
+		/// <returns></returns>
+		public static bool IsAbsolutePath(this string str)
+		{
+			return new Uri(str, UriKind.RelativeOrAbsolute).IsAbsolute();
+		}
+
     }
 
     /// <summary>
