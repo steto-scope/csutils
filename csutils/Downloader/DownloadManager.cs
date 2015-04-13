@@ -108,6 +108,17 @@ namespace csutils.Downloader
             }
         }
 
+		/// <summary>
+		/// returns true if the Download-Manager is currently downloading
+		/// </summary>
+		public bool IsDownloading
+		{
+			get
+			{
+				return RunningDownloads.Count() > 0;
+			}
+		}
+
         private int parallel;
         /// <summary>
         /// Amount of parallel downloads

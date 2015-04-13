@@ -329,5 +329,19 @@ namespace csutils.Test.Extensions
 			Assert.IsFalse("google.com".IsAbsolutePath());
 			Assert.IsTrue("http://google.com".IsAbsolutePath());
 		}
+
+		[TestCase]
+		public void TestSHA1()
+		{
+			Assert.AreEqual("da39a3ee5e6b4b0d3255bfef95601890afd80709", "".ToSHA1().ToLower());
+			Assert.AreEqual("68ac906495480a3404beee4874ed853a037a7a8f", "Franz jagt im komplett verwahrlosten Taxi quer durch Bayern".ToSHA1().ToLower());
+		}
+
+		[TestCase]
+		public void TestMD5()
+		{
+			Assert.AreEqual("d41d8cd98f00b204e9800998ecf8427e", "".ToMD5().ToLower());
+			Assert.AreEqual("a3cca2b2aa1e3b5b3b5aad99a8529074", "Franz jagt im komplett verwahrlosten Taxi quer durch Bayern".ToMD5().ToLower());
+		}
     }
 }

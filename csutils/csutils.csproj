@@ -96,6 +96,7 @@
     <Compile Include="Downloader\HTTPFileDownloader.cs" />
     <Compile Include="Downloader\IDownloader.cs" />
     <Compile Include="Downloader\ThrottledStream.cs" />
+    <Compile Include="Extensions\ByteExtension.cs" />
     <Compile Include="Extensions\ColorExtension.cs" />
     <Compile Include="Extensions\FileInfoExtension.cs" />
     <Compile Include="Extensions\NumericExtension.cs" />

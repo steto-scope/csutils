@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.AccessControl;
+using System.Security.Cryptography;
 using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
@@ -31,6 +32,28 @@ namespace System
 				return false;
 			}
 		}
+
+		/// <summary>
+		/// Calculates the MD5 hash of the file
+		/// </summary>
+		/// <param name="info"></param>
+		/// <returns></returns>
+		public static string ToMD5(this FileInfo info)
+		{
+			return File.ReadAllBytes(info.FullName).ToMD5();
+		}
+
+		/// <summary>
+		/// Calculates the SHA1 hash of the file
+		/// </summary>
+		/// <param name="info"></param>
+		/// <returns></returns>
+		public static string ToSHA1(this FileInfo info)
+		{
+			return File.ReadAllBytes(info.FullName).ToSHA1();
+		}
+
+
 #endif
 	}
 

@@ -10,6 +10,7 @@ using System.Text.RegularExpressions;
 #if CLR
 using System.Windows.Media;
 using csutils.Globalisation;
+using System.Security.Cryptography;
 #endif 
 
 namespace System
@@ -602,6 +603,36 @@ namespace System
 		public static bool IsAbsolutePath(this string str)
 		{
 			return new Uri(str, UriKind.RelativeOrAbsolute).IsAbsolute();
+		}
+
+		/// <summary>
+		/// Calculates the SHA1-Hash of the string
+		/// </summary>
+		/// <param name="str"></param>
+		/// <returns></returns>
+		public static string ToSHA1(this string str)
+		{
+			string hex;
+			using (SHA1Managed sha1 = new SHA1Managed())
+			{
+				hex = BitConverter.ToString(sha1.ComputeHash(Encoding.Default.GetBytes(str))).Replace("-", string.Empty);
+			}
+			return hex;
+		}
+
+		/// <summary>
+		/// Calculates the MD5-Hash of the string
+		/// </summary>
+		/// <param name="str"></param>
+		/// <returns></returns>
+		public static string ToMD5(this string str)
+		{
+			string hex;
+			using (MD5 md5 = new MD5CryptoServiceProvider())
+			{
+				hex = BitConverter.ToString(md5.ComputeHash(Encoding.Default.GetBytes(str))).Replace("-", string.Empty);
+			}
+			return hex;
 		}
 
     }

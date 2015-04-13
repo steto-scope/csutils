@@ -183,10 +183,10 @@ namespace csutils.Downloader
                 bw = null;
                 Target.Seek(0, SeekOrigin.Begin);
                 DownloadedBytes = 0;
-                DownloaderState = DownloadState.Inactive;
-                if (TargetFile != null && Target == null)
-                    Target = File.OpenWrite(TargetFile);
+                DownloaderState = DownloadState.Inactive;               
             }
+			if (TargetFile != null && Target == null)
+				Target = File.OpenWrite(TargetFile);
         }
 
         void bw_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -295,9 +295,14 @@ namespace csutils.Downloader
 							bw.ReportProgress(read);
 					}
 				}
+
+				if (Target != null)
+				{
+					Target.Flush();
+					Target.Seek(0, SeekOrigin.Begin);
+				}
 			}
-            Target.Flush();
-            Target.Seek(0, SeekOrigin.Begin);
+            
 
             if (DownloaderState == DownloadState.Aborting)
                 e.Cancel = true;
