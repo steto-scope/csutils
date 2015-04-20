@@ -90,6 +90,7 @@
     <Compile Include="Configuration\MergeStrategy.cs" />
     <Compile Include="Data\Base.cs" />
     <Compile Include="Data\DummyData.cs" />
+    <Compile Include="Data\SerializableStringDictionary.cs" />
     <Compile Include="Data\TwoKeyDictionary.cs" />
     <Compile Include="Data\SerializableDictionary.cs" />
     <Compile Include="Downloader\DownloaderBase.cs" />
