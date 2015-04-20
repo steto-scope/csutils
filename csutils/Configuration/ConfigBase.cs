@@ -132,11 +132,25 @@ namespace csutils.Configuration
 		}
 
 		/// <summary>
+		/// Event that gets fired when configurations has been changed. If multiple settings has been changed 
+		/// ConfigChangedEventArgs.Empty will be used instead of firing event for every single setting
+		/// </summary>
+		public event EventHandler<ConfigChangedEventArgs> ConfigChanged;
+
+		/// <summary>
+		/// Gets or sets a value that indicates if ConfigChanged should fire or not.
+		/// This is mainly used in Merge() or around FillDefaults() to prevent spamming events
+		/// </summary>
+		protected bool SuppressConfigChanged { get; set; }
+
+		/// <summary>
 		/// Creates a new, empty config object
 		/// </summary>
 		public ConfigBase()
 		{
+			SuppressConfigChanged = true;
 			FillDefaults();
+			SuppressConfigChanged = false;
 		}
 
 		/// <summary>
@@ -144,6 +158,7 @@ namespace csutils.Configuration
 		/// </summary>
 		public void LoadUserConfig()
 		{
+			SuppressConfigChanged = true;
 			try
 			{
 				using (FileStream fs = new FileStream(UserConfigFile, FileMode.Open))
@@ -160,13 +175,18 @@ namespace csutils.Configuration
 			{
 
 			}
+			SuppressConfigChanged = false;
+			if (ConfigChanged != null)
+				ConfigChanged(this, ConfigChangedEventArgs.Empty);
 		}
+
 
 		/// <summary>
 		/// (Re)Loads the settings in the Application-Level config file. Overwrites all entries which are also found in the file
 		/// </summary>
 		public void LoadAppConfig()
 		{
+			SuppressConfigChanged = true;
 			try
 			{
 				using (FileStream fs = new FileStream(AppConfigFile, FileMode.Open))
@@ -183,6 +203,9 @@ namespace csutils.Configuration
 			{
 
 			}
+			SuppressConfigChanged = false;
+			if (ConfigChanged != null)
+				ConfigChanged(this, ConfigChangedEventArgs.Empty);
 		}
 
 		/// <summary>
@@ -241,16 +264,28 @@ namespace csutils.Configuration
 		/// <param name="level">The configuration level</param>
 		protected void Set(string key, object o, ConfigLevel level = ConfigLevel.User)
 		{
+			object old;
 			switch(level)
 			{
 				case ConfigLevel.Application:
+					old = appconfig.ContainsKey(key) ? appconfig[key] : null;
 					appconfig[key] = o;
+					if(!SuppressConfigChanged && ConfigChanged!=null)
+						ConfigChanged(this, new ConfigChangedEventArgs(key, level, o, old));					
 					break;
+
 				case ConfigLevel.User:
+					old = userconfig.ContainsKey(key) ? userconfig[key] : null;
 					userconfig[key] = o;
+					if(!SuppressConfigChanged && ConfigChanged!=null)
+						ConfigChanged(this, new ConfigChangedEventArgs(key, level, o, old));					
 					break;
+
 				case ConfigLevel.Instance:
+					old = instconfig.ContainsKey(key) ? instconfig[key] : null;
 					instconfig[key] = o;
+					if (!SuppressConfigChanged && ConfigChanged != null)
+						ConfigChanged(this, new ConfigChangedEventArgs(key, level, o, old));	
 					break;
 			}
 		}
@@ -288,6 +323,7 @@ namespace csutils.Configuration
 		/// <param name="strat"></param>
 		public void Merge(ConfigBase config, MergeStrategy strat = MergeStrategy.Overwrite)
 		{
+			SuppressConfigChanged = true;
 			switch(strat)
 			{
 				case MergeStrategy.Overwrite:
@@ -322,7 +358,10 @@ namespace csutils.Configuration
 						if (instconfig.ContainsKey(s))
 							Set(s, config.instconfig[s], ConfigLevel.Instance);
 					break;
-			}			
+			}
+			SuppressConfigChanged = false;
+			if (ConfigChanged != null)
+				ConfigChanged(this, ConfigChangedEventArgs.Empty);
 		}
 
 		/// <summary>
