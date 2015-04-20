@@ -120,6 +120,25 @@ namespace csutils.Globalisation
             return dictionaries.Where(w => w.Key.Item2 == channel).Select(s => s.Key.Item1);
         }
 
+		/// <summary>
+		/// Tries to add all files of a directory. Invalid files will be ignored. Uses the standard naming convention 
+		/// of the Add(string,CultureInfo,string)-Method for all files to determine Culture and Channel
+		/// </summary>
+		/// <param name="path"></param>
+		public static void AddFromDirectory(string path)
+		{
+			foreach (string file in Directory.EnumerateFiles(path))
+			{
+				try
+				{
+					Add(file);
+				}
+				catch
+				{
+				}
+			}
+		}
+
         /// <summary>
         /// Adds a translation given by a file. 
         /// If the culture-parameter is null the method will try to determine the culture by itself based on the filename.
