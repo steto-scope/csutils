@@ -52,6 +52,8 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
+    <Compile Include="Configuration\ConfigBaseTest.cs" />
+    <Compile Include="Configuration\SampleConfig.cs" />
     <Compile Include="Data\BaseTest.cs" />
     <Compile Include="Data\HSVTest.cs" />
     <Compile Include="Data\RegexesTest.cs" />
