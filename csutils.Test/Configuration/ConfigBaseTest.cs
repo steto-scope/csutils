@@ -44,5 +44,60 @@ namespace csutils.Test.Configuration
 			Assert.AreEqual("Foo", sc2.TC.Something);
 
 		}
+
+		[TestCase]
+		public void TestMerge()
+		{
+			SampleConfig sc; SampleConfig sc2;
+			
+			sc = new SampleConfig();
+			sc.Test = 100;
+			sc.Test2 = 700;
+			sc.Test3 = 666;
+
+			sc2 = new SampleConfig();
+			sc2.Test = 77;
+			sc2.Test2 = 700;
+
+			sc.Merge(sc2,MergeStrategy.Overwrite);
+			Assert.AreEqual(77, sc.Test);
+			Assert.AreEqual(700, sc.Test2);
+			Assert.AreEqual(666, sc.Test3);
+
+
+
+
+			sc = new SampleConfig();
+			sc.Test = 100;
+			sc.Test2 = 700;
+			sc.Test3 = 666;
+
+			sc2 = new SampleConfig();
+			sc2.Test = 77;
+			sc2.Test2 = 700;
+
+			sc.Merge(sc2, MergeStrategy.AddNonExistingOnly);
+			Assert.AreEqual(100, sc.Test);
+			Assert.AreEqual(700, sc.Test2);
+			Assert.AreEqual(666, sc.Test3);
+
+
+
+
+			sc = new SampleConfig();
+			sc.Test = 100;
+			sc.Test2 = 700;			
+
+			sc2 = new SampleConfig();
+			sc2.Test = 77;
+			sc2.Test2 = 800;
+			sc2.Test3 = 666;
+
+			sc.Merge(sc2, MergeStrategy.UpdateExistingOnly);
+			Assert.AreEqual(77, sc.Test);
+			Assert.AreEqual(800, sc.Test2);
+			Assert.AreEqual(0, sc.Test3);
+
+		}
 	}
 }

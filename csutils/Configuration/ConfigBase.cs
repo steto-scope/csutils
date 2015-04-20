@@ -10,25 +10,43 @@ using System.Xml.Serialization;
 
 namespace csutils.Configuration
 {
-	
+	/// <summary>
+	/// BaseClass for all Configuration Files. 
+	/// 
+	/// Derive from this class and add custom properties. The getter and setter of the strong typed Properties 
+	/// should internally call Get() and Set() for using the mechanics of this class. 
+	/// Usage for Configuration-Windows: Use Clone() to create a copy of the config object and use this to present and 
+	/// change settings by the user. After click on "Apply" use Merge() to apply the changed settings to the active 
+	/// object. Alternatively it is possible to directly change the settings
+	/// 
+	/// IMPORTANT: 
+	/// BaseConfig uses XmlSerializer for Serialisation which automatically gets the type using reflection. 
+	/// Be sure that your Property-Type is serializable. Due to its use of Reflection serialisation is rather
+	/// slow. 
+	/// </summary>
 	public abstract class ConfigBase
 	{
-		private string userconfigfile;
-
+		/// <summary>
+		/// Gets the file containing the User-Level settings
+		/// </summary>
 		public string UserConfigFile
 		{
 			get { return UserConfigPath + "\\user.config"; }
 		}
 
-		private string appconfigfile;
-
+		/// <summary>
+		/// Gets the file containing the Application-Level settings
+		/// </summary>
 		public string AppConfigFile
 		{
 			get { return AppConfigPath + "\\app.config"; }
 		}
 
 		private string userconfigpath;
-
+		/// <summary>
+		/// Gets or sets the path to the User-Level settings. Returns always a valid path.
+		/// If no path has been set it will return a path in the default location using the Assembly-name (%AppData%\Assemblyname)
+		/// </summary>
 		public string UserConfigPath
 		{
 			get 
@@ -38,7 +56,7 @@ namespace csutils.Configuration
 
 				try
 				{
-					Path.GetFullPath(userconfigfile); //invalid paths will cause an exception
+					Path.GetFullPath(userconfigpath); //invalid paths will cause an exception
 				}
 				catch
 				{
@@ -58,7 +76,10 @@ namespace csutils.Configuration
 		}
 
 		private string appconfigpath;
-
+		/// <summary>
+		/// Gets or sets the path to the Application-Level settings. Returns always a valid path.
+		/// If no path has been set it will return a path in the default location using the Assembly-name (%CommonAppData%\Assemblyname)
+		/// </summary>
 		public string AppConfigPath
 		{
 			get
@@ -68,7 +89,7 @@ namespace csutils.Configuration
 
 				try
 				{
-					Path.GetFullPath(appconfigfile);
+					Path.GetFullPath(appconfigpath);
 				}
 				catch
 				{
@@ -87,11 +108,15 @@ namespace csutils.Configuration
 			}
 		}
 
-		
-		private SerializableDictionary<string, object> userconfig;
-		private SerializableDictionary<string, object> appconfig;
-		private SerializableDictionary<string, object> instconfig;
 
+		private SerializableDictionary<string, object> userconfig = new SerializableDictionary<string, object>();
+		private SerializableDictionary<string, object> appconfig = new SerializableDictionary<string, object>();
+		private SerializableDictionary<string, object> instconfig = new SerializableDictionary<string, object>();
+		/// <summary>
+		/// Clones the config object. Creates a new instance and copies all references held in the dictionaries
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <returns></returns>
 		public T Clone<T>() where T : ConfigBase, new()
 		{
 			T t = new T();
@@ -106,16 +131,17 @@ namespace csutils.Configuration
 			return t;
 		}
 
+		/// <summary>
+		/// Creates a new, empty config object
+		/// </summary>
 		public ConfigBase()
 		{
-			userconfig = new SerializableDictionary<string, object>();
-			instconfig = new SerializableDictionary<string, object>();
-			appconfig = new SerializableDictionary<string, object>();
-
 			FillDefaults();
 		}
 
-
+		/// <summary>
+		/// (Re)Loads the settings in the User-Level config file. Overwrites all entries which are also found in the file
+		/// </summary>
 		public void LoadUserConfig()
 		{
 			try
@@ -136,6 +162,9 @@ namespace csutils.Configuration
 			}
 		}
 
+		/// <summary>
+		/// (Re)Loads the settings in the Application-Level config file. Overwrites all entries which are also found in the file
+		/// </summary>
 		public void LoadAppConfig()
 		{
 			try
@@ -156,13 +185,18 @@ namespace csutils.Configuration
 			}
 		}
 
+		/// <summary>
+		/// (Re)Loads all settings from the files
+		/// </summary>
 		public void LoadAll()
 		{
 			LoadAppConfig();
 			LoadUserConfig();
 		}
 
-
+		/// <summary>
+		/// Saves the User-Level config into the file
+		/// </summary>
 		public void SaveUserConfig()
 		{
 			if (!Directory.Exists(UserConfigPath))
@@ -175,6 +209,9 @@ namespace csutils.Configuration
 			}
 		}
 
+		/// <summary>
+		/// Saves the Application-Level config to the file
+		/// </summary>
 		public void SaveAppConfig()
 		{
 			if (!Directory.Exists(AppConfigPath))
@@ -187,12 +224,21 @@ namespace csutils.Configuration
 			}
 		}
 
+		/// <summary>
+		/// Saves all settings to the files
+		/// </summary>
 		public void SaveAll()
 		{
 			SaveAppConfig();
 			SaveUserConfig();
 		}
 
+		/// <summary>
+		/// Sets a setting
+		/// </summary>
+		/// <param name="key">The name (ID) of the setting</param>
+		/// <param name="o">The object to save</param>
+		/// <param name="level">The configuration level</param>
 		protected void Set(string key, object o, ConfigLevel level = ConfigLevel.User)
 		{
 			switch(level)
@@ -208,7 +254,13 @@ namespace csutils.Configuration
 					break;
 			}
 		}
-
+		/// <summary>
+		/// Gets a setting
+		/// </summary>
+		/// <typeparam name="T">Type of the read object (the object will be casted to this type)</typeparam>
+		/// <param name="key">The name (ID) of the setting</param>
+		/// <param name="level">The configuration level</param>
+		/// <returns></returns>
 		protected T Get<T>(string key, ConfigLevel level = ConfigLevel.User)
 		{
 			switch (level)
@@ -229,6 +281,53 @@ namespace csutils.Configuration
 			}
 		}
 
+		/// <summary>
+		/// Merges the data of another config file into this instance.
+		/// </summary>
+		/// <param name="config"></param>
+		/// <param name="strat"></param>
+		public void Merge(ConfigBase config, MergeStrategy strat = MergeStrategy.Overwrite)
+		{
+			switch(strat)
+			{
+				case MergeStrategy.Overwrite:
+					foreach (var s in config.userconfig.Keys)
+						Set(s, config.userconfig[s], ConfigLevel.User);
+					foreach (var s in config.appconfig.Keys)
+						Set(s, config.appconfig[s], ConfigLevel.Application);
+					foreach (var s in config.instconfig.Keys)
+						Set(s, config.instconfig[s], ConfigLevel.Instance);
+					break;
+
+				case MergeStrategy.AddNonExistingOnly:
+					foreach (var s in config.userconfig.Keys)
+						if(!userconfig.ContainsKey(s))
+							Set(s, config.userconfig[s], ConfigLevel.User);
+					foreach (var s in config.appconfig.Keys)
+						if (!appconfig.ContainsKey(s))
+							Set(s, config.appconfig[s], ConfigLevel.Application);
+					foreach (var s in config.instconfig.Keys)
+						if (!instconfig.ContainsKey(s))
+							Set(s, config.instconfig[s], ConfigLevel.Instance);
+					break;
+
+				case MergeStrategy.UpdateExistingOnly:
+					foreach (var s in config.userconfig.Keys)
+						if(userconfig.ContainsKey(s))
+							Set(s, config.userconfig[s], ConfigLevel.User);
+					foreach (var s in config.appconfig.Keys)
+						if (appconfig.ContainsKey(s))
+							Set(s, config.appconfig[s], ConfigLevel.Application);
+					foreach (var s in config.instconfig.Keys)
+						if (instconfig.ContainsKey(s))
+							Set(s, config.instconfig[s], ConfigLevel.Instance);
+					break;
+			}			
+		}
+
+		/// <summary>
+		/// Sets the default-values for all settings
+		/// </summary>
 		public abstract void FillDefaults();
 	}
 }
