@@ -109,9 +109,9 @@ namespace csutils.Configuration
 		}
 
 
-		private SerializableDictionary<string, object> userconfig = new SerializableDictionary<string, object>();
-		private SerializableDictionary<string, object> appconfig = new SerializableDictionary<string, object>();
-		private SerializableDictionary<string, object> instconfig = new SerializableDictionary<string, object>();
+		private SerializableStringDictionary<object> userconfig = new SerializableStringDictionary<object>();
+		private SerializableStringDictionary<object> appconfig = new SerializableStringDictionary<object>();
+		private SerializableStringDictionary<object> instconfig = new SerializableStringDictionary<object>();
 		/// <summary>
 		/// Clones the config object. Creates a new instance and copies all references held in the dictionaries
 		/// </summary>
@@ -163,8 +163,8 @@ namespace csutils.Configuration
 			{
 				using (FileStream fs = new FileStream(UserConfigFile, FileMode.Open))
 				{
-					XmlSerializer x = new XmlSerializer(typeof(SerializableDictionary<string, object>));
-					var d = (SerializableDictionary<string, object>)x.Deserialize(fs);
+					XmlSerializer x = new XmlSerializer(typeof(SerializableStringDictionary<object>));
+					var d = (SerializableStringDictionary<object>)x.Deserialize(fs);
 					foreach (var k in d.Keys)
 					{
 						userconfig[k] = d[k];
@@ -191,8 +191,8 @@ namespace csutils.Configuration
 			{
 				using (FileStream fs = new FileStream(AppConfigFile, FileMode.Open))
 				{
-					XmlSerializer x = new XmlSerializer(typeof(SerializableDictionary<string, object>));
-					var d = (SerializableDictionary<string, object>)x.Deserialize(fs);
+					XmlSerializer x = new XmlSerializer(typeof(SerializableStringDictionary<object>));
+					var d = (SerializableStringDictionary<object>)x.Deserialize(fs);
 					foreach (var k in d.Keys)
 					{
 						appconfig[k] = d[k];
@@ -227,7 +227,7 @@ namespace csutils.Configuration
 
 			using (FileStream fs = new FileStream(UserConfigFile, FileMode.Create))
 			{
-				XmlSerializer x = new XmlSerializer(typeof(SerializableDictionary<string, object>));
+				XmlSerializer x = new XmlSerializer(typeof(SerializableStringDictionary<object>));
 				x.Serialize(fs,userconfig);
 			}
 		}
@@ -242,7 +242,7 @@ namespace csutils.Configuration
 
 			using (FileStream fs = new FileStream(AppConfigFile, FileMode.Create))
 			{
-				XmlSerializer x = new XmlSerializer(typeof(SerializableDictionary<string, object>));
+				XmlSerializer x = new XmlSerializer(typeof(SerializableStringDictionary<object>));
 				x.Serialize(fs, appconfig);
 			}
 		}

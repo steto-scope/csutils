@@ -11,7 +11,6 @@ namespace csutils.Data
 	/// <summary>
 	/// Simplified Version of SerializableDictionary for use with string keys
 	/// </summary>
-	/// <typeparam name="TKey">key type</typeparam>
 	/// <typeparam name="TValue">value type</typeparam>
 	public class SerializableStringDictionary<TValue> : Dictionary<string, TValue>, IXmlSerializable
 	{
