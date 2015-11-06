@@ -117,7 +117,7 @@ namespace csutils.Globalisation
         /// <returns></returns>
         public static IEnumerable<string> InstalledTranslations(string channel = "")
         {
-            return dictionaries.Where(w => w.Key.Item2 == channel).Select(s => s.Key.Item1);
+            return dictionaries.Where(w => w.Key.Value == channel).Select(s => s.Key.Key);
         }
 
 		/// <summary>
@@ -127,7 +127,7 @@ namespace csutils.Globalisation
 		/// <param name="path"></param>
 		public static void AddFromDirectory(string path)
 		{
-			foreach (string file in Directory.EnumerateFiles(path))
+			foreach (string file in Directory.GetFiles(path))
 			{
 				try
 				{

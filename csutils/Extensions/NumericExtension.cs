@@ -227,6 +227,7 @@ namespace System
         /// <param name="size">original size</param>
         /// <param name="target">target unit</param>
         /// <param name="given">original unit, Byte is default</param>
+        /// <param name="stringFormat">Format-String for the Number output. Default is {0:0.##}</param>
         /// <returns></returns>
         public static string FormatFilesize(this long size, FileSizeUnit target = FileSizeUnit.Auto, FileSizeUnit given = FileSizeUnit.Byte, string stringFormat = "{0:0.##}")
         {

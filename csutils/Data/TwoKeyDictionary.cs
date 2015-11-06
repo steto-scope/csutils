@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace csutils.Data
 {
@@ -12,7 +11,7 @@ namespace csutils.Data
 	/// <typeparam name="T1"></typeparam>
 	/// <typeparam name="T2"></typeparam>
 	/// <typeparam name="T3"></typeparam>
-	public class TwoKeyDictionary<T1, T2, T3> : SerializableDictionary<Tuple<T1, T2>, T3>
+	public class TwoKeyDictionary<T1, T2, T3> : SerializableDictionary<KeyValuePair<T1, T2>, T3>
 	{
 		/// <summary>
 		/// Adds a new entry
@@ -22,7 +21,7 @@ namespace csutils.Data
 		/// <param name="value"></param>
 		public void Add(T1 key1, T2 key2, T3 value)
 		{
-			base.Add(new Tuple<T1, T2>(key1, key2), value);
+            base.Add(new KeyValuePair<T1, T2>(key1, key2), value);
 		}
 
 		/// <summary>
@@ -33,7 +32,7 @@ namespace csutils.Data
 		/// <returns></returns>
 		public bool ContainsKey(T1 key1, T2 key2)
 		{
-			return base.ContainsKey(new Tuple<T1, T2>(key1, key2));
+            return base.ContainsKey(new KeyValuePair<T1, T2>(key1, key2));
 		}
 
 		/// <summary>
@@ -43,7 +42,7 @@ namespace csutils.Data
 		/// <returns></returns>
 		public bool ContainsKey1(T1 key1)
 		{
-			return base.Keys.Select(s => s.Item1).Contains(key1);
+			return base.Keys.Select(s => s.Key).Contains(key1);
 		}
 		/// <summary>
 		/// Checks if there´s any entry that have the given second key
@@ -52,7 +51,7 @@ namespace csutils.Data
 		/// <returns></returns>
 		public bool ContainsKey2(T2 key2)
 		{
-			return base.Keys.Select(s => s.Item2).Contains(key2);
+			return base.Keys.Select(s => s.Value).Contains(key2);
 		}
 
 		/// <summary>
@@ -63,7 +62,7 @@ namespace csutils.Data
 		/// <returns></returns>
 		public bool Remove(T1 key1, T2 key2)
 		{
-			return base.Remove(new Tuple<T1, T2>(key1, key2));
+            return base.Remove(new KeyValuePair<T1, T2>(key1, key2));
 		}
 		/// <summary>
 		/// Removes all keys that have the given first key
@@ -72,8 +71,8 @@ namespace csutils.Data
 		/// <returns></returns>
 		public bool RemoveKey1(T1 key1)
 		{
-			List<Tuple<T1, T2>> todelete = new List<Tuple<T1, T2>>();
-			foreach (Tuple<T1, T2> key in Keys.Where(w => this.ContainsKey1(w.Item1)))
+            List<KeyValuePair<T1, T2>> todelete = new List<KeyValuePair<T1, T2>>();
+            foreach (KeyValuePair<T1, T2> key in Keys.Where(w => this.ContainsKey1(w.Key)))
 				todelete.Add(key);
 
 			List<bool> results = new List<bool>();
@@ -89,8 +88,8 @@ namespace csutils.Data
 		/// <returns></returns>
 		public bool RemoveKey2(T2 key2)
 		{
-			List<Tuple<T1, T2>> todelete = new List<Tuple<T1, T2>>();
-			foreach (Tuple<T1, T2> key in Keys.Where(w => this.ContainsKey2(w.Item2)))
+            List<KeyValuePair<T1, T2>> todelete = new List<KeyValuePair<T1, T2>>();
+            foreach (KeyValuePair<T1, T2> key in Keys.Where(w => this.ContainsKey2(w.Value)))
 				todelete.Add(key);
 
 			List<bool> results = new List<bool>();
@@ -108,7 +107,7 @@ namespace csutils.Data
 		/// <returns></returns>
 		public bool TryGetValue(T1 key1, T2 key2, out T3 value)
 		{
-			return TryGetValue(new Tuple<T1, T2>(key1, key2), out value);
+            return TryGetValue(new KeyValuePair<T1, T2>(key1, key2), out value);
 		}
 
 		/// <summary>
@@ -121,11 +120,11 @@ namespace csutils.Data
 		{
 			get
 			{
-				return base[new Tuple<T1, T2>(key1, key2)];
+                return base[new KeyValuePair<T1, T2>(key1, key2)];
 			}
 			set
 			{
-				base[new Tuple<T1, T2>(key1, key2)] = value;
+                base[new KeyValuePair<T1, T2>(key1, key2)] = value;
 			}
 		}
 
