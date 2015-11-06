@@ -220,5 +220,67 @@ namespace System
 			}
 			return val;
 		}
+
+        /// <summary>
+        /// Converts a size to a filesize string
+        /// </summary>
+        /// <param name="size">original size</param>
+        /// <param name="target">target unit</param>
+        /// <param name="given">original unit, Byte is default</param>
+        /// <returns></returns>
+        public static string FormatFilesize(this long size, FileSizeUnit target = FileSizeUnit.Auto, FileSizeUnit given = FileSizeUnit.Byte, string stringFormat = "{0:0.##}")
+        {
+            string[] unit = new string[]{"","B","KB","MB","GB","TB","PB","EB"};
+            
+            given = given == FileSizeUnit.Auto ? (FileSizeUnit)1 : given; //Auto == Byte for given bytes
+            long sizeinbyte = (long)(size*Math.Pow(1024,(int)given-1)); //size in byte
+            int steps = (int)Math.Floor(Math.Log(sizeinbyte, 1024)); //number of 1024er steps inside s (lower bound)
+           
+            int upper = (int)target;
+            if(upper == int.MaxValue)
+                upper = steps+1;
+
+            double res = sizeinbyte * Math.Pow(1024, -(upper-1));
+            return string.Format(stringFormat+" {1}", res, unit[upper]);
+        }
+    }
+
+    /// <summary>
+    /// Unit of Filesizes
+    /// </summary>
+    public enum FileSizeUnit : int
+    {
+        /// <summary>
+        /// Unit is chosen automatically
+        /// </summary>
+        Auto = int.MaxValue,
+        /// <summary>
+        /// Byte
+        /// </summary>
+        Byte = 1,
+        /// <summary>
+        /// Kilobyte
+        /// </summary>
+        Kilobyte = 2,
+        /// <summary>
+        /// Megabyte
+        /// </summary>
+        Megabyte = 3,
+        /// <summary>
+        /// Gigabyte
+        /// </summary>
+        Gigabyte = 4,
+        /// <summary>
+        /// Terabyte
+        /// </summary>
+        Terabyte = 5,
+        /// <summary>
+        /// Petabyte
+        /// </summary>
+        Petabyte = 6,
+        /// <summary>
+        /// Exabyte
+        /// </summary>
+        Exabyte = 7
     }
 }

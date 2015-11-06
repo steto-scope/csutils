@@ -98,7 +98,17 @@ namespace csutils.Data
         /// <returns></returns>
         public virtual T Get<T>(string key)
         {
-            return (T)GetProperty(key);
+            try
+            {
+                object o = GetProperty(key);
+                if (o == null)
+                    return default(T);
+                return (T)o;
+            }
+            catch
+            {
+                return default(T);
+            }
         }
 
 

@@ -15,8 +15,11 @@ namespace csutils.Test.Extensions
 		[TestCase]
 		public void TestCanWrite()
 		{
-			Assert.IsTrue(new FileInfo(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\test.txt").CanWrite());
-			Assert.IsFalse(new FileInfo("C:\\Windows\\System32\\sethc.exe").CanWrite());
+            FileInfo fi = new FileInfo("test.txt");            
+			Assert.IsTrue(fi.CanWrite());
+            
+		
+            Assert.IsFalse(new FileInfo("C:\\Windows\\System32\\sethc.exe").CanWrite());
 			try
 			{
 				new FileInfo("C:\\Windows\\System32?\\sethc.exe").CanWrite();

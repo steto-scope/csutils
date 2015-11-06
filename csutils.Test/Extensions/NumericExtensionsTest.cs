@@ -11,9 +11,18 @@ namespace csutils.Test.Extensions
 	public class NumericExtensionsTest
 	{
 		[TestCase]
-		public void TestSaturate()
+		public void TestFormatFilesize()
 		{
-			
+            Assert.AreEqual(string.Format("{0:0.##} MB",2.8), (2936012L).FormatFilesize());
+            Assert.AreEqual(string.Format("{0:0.##} GB", 42), (45097156608L).FormatFilesize());
+            Assert.AreEqual(string.Format("{0:0.##} TB", 42), (45097156608L).FormatFilesize(FileSizeUnit.Auto, FileSizeUnit.Kilobyte));
+            Assert.AreEqual(string.Format("{0:0.##} GB", 43008), (45097156608L).FormatFilesize(FileSizeUnit.Gigabyte, FileSizeUnit.Kilobyte));
+            Assert.AreEqual(string.Format("{0:0.##} MB", 43008), (45097156608L).FormatFilesize(FileSizeUnit.Megabyte, FileSizeUnit.Auto));
+            Assert.AreEqual(string.Format("{0:0} MB", 43008), (45097156608L).FormatFilesize(FileSizeUnit.Megabyte, FileSizeUnit.Auto,"{0:0}"));
+            Assert.AreEqual(string.Format("{0:0.##} TB", 0.041015625), (42L).FormatFilesize(FileSizeUnit.Terabyte, FileSizeUnit.Gigabyte));
+            Assert.AreEqual(string.Format("{0:0.##} TB", 0.0000400543212890625), (42L).FormatFilesize(FileSizeUnit.Terabyte, FileSizeUnit.Megabyte));
+            Assert.AreEqual(string.Format("{0:0.##} GB", 42), (42L).FormatFilesize(FileSizeUnit.Auto, FileSizeUnit.Gigabyte));
+
 		}
 
 

@@ -144,7 +144,6 @@ if %25textTemplatingPath%25=="\Microsoft Shared\TextTemplating\$(VisualStudioVer
 cd $(ProjectDir)
 "C:\Program Files\doxygen\bin\doxygen.exe" $(ProjectDir)csutils.doxygen
 nuget.exe pack csutils.csproj -prop Configuration=Release
-call publish.bat
 )</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

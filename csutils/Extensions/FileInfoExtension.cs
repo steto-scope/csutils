@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security;
 using System.Security.AccessControl;
 using System.Security.Cryptography;
+using System.Security.Permissions;
 using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
@@ -72,12 +74,20 @@ namespace System
 		{
 			try
 			{
-				string username = System.Security.Principal.WindowsIdentity.GetCurrent().Name;
-				AuthorizationRuleCollection rules = info.GetAccessControl(AccessControlSections.All).GetAccessRules(true, true, typeof(NTAccount));
+                FileInfo fi = new FileInfo(info.FullName+"\\iotest.tmp");
+              
+                try
+                {
+                    using(var fs = fi.OpenWrite())
+                        fs.WriteByte((byte)32);                    
+                }
+                catch
+                {
+                    return false;
+                }
 
-				foreach (AuthorizationRule rule in rules)
-					if (rule.IdentityReference.Value.Equals(username, StringComparison.CurrentCultureIgnoreCase))
-						return ((((FileSystemAccessRule)rule).FileSystemRights & FileSystemRights.WriteData) > 0);									
+                fi.Delete();
+                return true;				
 			}
 			catch {	}
 

@@ -29,7 +29,8 @@ namespace REC.Test.Data
             Assert.AreNotEqual(b.ComplexType, b2.ComplexType);
             Assert.AreNotEqual(b, b2);
             Assert.AreNotEqual(b.ImmutableType, b2.ImmutableType);
-            
+
+			b.Get<bool>("something");
 
         }
     }
