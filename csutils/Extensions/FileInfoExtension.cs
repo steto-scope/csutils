@@ -54,6 +54,35 @@ namespace System
 			return File.ReadAllBytes(info.FullName).ToSHA1();
 		}
 
+        /// <summary>
+        /// Checks if the file is a descendant of a directory
+        /// </summary>
+        /// <param name="fsi"></param>
+        /// <param name="dir"></param>
+        /// <returns></returns>
+        public static bool IsDescendantOf(this FileInfo fsi, DirectoryInfo dir)
+        {
+            if (dir == null)
+                throw new ArgumentNullException("dir");
+
+            string target = dir.FullName.EndsWith("\\") ? dir.FullName.Substring(0, dir.FullName.Length - 1) : dir.FullName;
+
+            if (fsi.Directory.FullName == dir.FullName)
+                return true;
+
+            DirectoryInfo temp = new DirectoryInfo(fsi.Directory.FullName);
+
+            while (temp.Parent != null)
+            {
+                if (temp.Parent.FullName == target)
+                {
+                    return true;
+                }
+                else
+                    temp = temp.Parent;
+            }
+            return false;
+        }
 
 #endif
 	}
@@ -93,5 +122,32 @@ namespace System
 			return false;
 		}
 #endif
+               
+
+        /// <summary>
+        /// Checks if the directory is a descendant of another directory
+        /// </summary>
+        /// <param name="fsi"></param>
+        /// <param name="dir"></param>
+        /// <returns></returns>
+        public static bool IsDescendantOf(this DirectoryInfo fsi, DirectoryInfo dir)
+        {
+            if (dir == null)
+                throw new ArgumentNullException("dir");
+
+            DirectoryInfo temp = new DirectoryInfo(fsi.FullName);
+            string target = dir.FullName.EndsWith("\\") ? dir.FullName.Substring(0, dir.FullName.Length - 1) : dir.FullName;
+
+            while (temp.Parent != null)
+            {
+                if (temp.Parent.FullName == target)
+                {
+                    return true;
+                }
+                else
+                    temp = temp.Parent;
+            }
+            return false;
+        }
 	}
 }
