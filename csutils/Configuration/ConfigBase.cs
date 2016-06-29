@@ -51,7 +51,7 @@ namespace csutils.Configuration
 			get 
 			{
 				if (string.IsNullOrEmpty(userconfigpath))
-					return Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\" + Assembly.GetExecutingAssembly().GetName(true).Name;
+					return Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\" + Assembly.GetCallingAssembly().GetName(true).Name;
 
 				try
 				{
@@ -59,7 +59,7 @@ namespace csutils.Configuration
 				}
 				catch
 				{
-					return Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\" + Assembly.GetExecutingAssembly().GetName(true).Name;
+                    return Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\" + Assembly.GetCallingAssembly().GetName(true).Name;
 				}
 
 				return userconfigpath;
@@ -84,7 +84,7 @@ namespace csutils.Configuration
 			get
 			{
 				if (string.IsNullOrEmpty(appconfigpath))
-					return Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + "\\" + Assembly.GetExecutingAssembly().GetName(true).Name;
+                    return Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + "\\" + Assembly.GetCallingAssembly().GetName(true).Name;
 
 				try
 				{
@@ -92,7 +92,7 @@ namespace csutils.Configuration
 				}
 				catch
 				{
-					return Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + "\\" + Assembly.GetExecutingAssembly().GetName(true).Name;
+                    return Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + "\\" + Assembly.GetCallingAssembly().GetName(true).Name;
 				}
 
 				return appconfigpath;
