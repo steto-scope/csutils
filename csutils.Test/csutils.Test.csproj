@@ -60,6 +60,7 @@
     <Compile Include="Data\RegexesTest.cs" />
     <Compile Include="Data\SerializableDictionaryTest.cs" />
     <Compile Include="Data\SerializableStringDictionary.cs" />
+    <Compile Include="Data\UniqueList.cs" />
     <Compile Include="Downloader\ThrottledStreamTest.cs" />
     <Compile Include="Extensions\ByteExtensionTest.cs" />
     <Compile Include="Extensions\FileInfoExtensionTest.cs" />

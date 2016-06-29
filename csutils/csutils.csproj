@@ -90,6 +90,7 @@
     <Compile Include="Data\SerializableStringDictionary.cs" />
     <Compile Include="Data\TwoKeyDictionary.cs" />
     <Compile Include="Data\SerializableDictionary.cs" />
+    <Compile Include="Data\UniqueList.cs" />
     <Compile Include="Downloader\DownloaderBase.cs" />
     <Compile Include="Downloader\DownloaderFactory.cs" />
     <Compile Include="Downloader\DownloadManager.cs" />
